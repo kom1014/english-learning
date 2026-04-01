@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEW HORIZON 1 - Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',sans-serif;min-height:100vh;background:linear-gradient(168deg,#faf6f1 0%,#f0ebe4 40%,#e8e1d8 100%);color:#3d3429}
+.app{max-width:600px;margin:0 auto;padding:0 16px 40px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.25)}50%{box-shadow:0 0 0 14px rgba(34,197,94,0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.anim-in{animation:fadeIn .35s ease-out}.anim-correct{animation:pulse-green .5s ease-out}.anim-wrong{animation:shake .4s ease-out}
+.header{padding:24px 0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #d9cfc4;flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.logo{font-family:'Playfair Display',serif;font-size:26px;font-weight:500;letter-spacing:-.5px;color:#2d2519}
+.subtitle{font-family:'DM Mono',monospace;font-size:11px;color:#a09486;letter-spacing:1.5px;text-transform:uppercase}
+.nav{display:flex;gap:4px}
+.nav-btn{background:none;border:none;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;color:#8b7e74;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .2s}
+.nav-btn.active{background:#3d3429;color:#faf6f1}
+.unit-nav{display:flex;gap:6px;margin:16px 0 8px;flex-wrap:wrap}
+.unit-tab{font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;background:#fffcf8;color:#5a4f43;padding:8px 18px;border-radius:20px;border:2px solid #d9cfc4;cursor:pointer;transition:all .2s}
+.unit-tab:hover{border-color:#8b7e74}
+.unit-tab.active{background:#2d6a4f;color:#fff;border-color:#2d6a4f}
+.part-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.part-chip{font-family:'DM Mono',monospace;font-size:11px;background:#fffcf8;color:#5a4f43;padding:5px 12px;border-radius:16px;border:1px solid #e0d8cf;cursor:pointer;transition:all .2s}
+.part-chip:hover{border-color:#b0a69c}
+.part-chip.active{background:#2d6a4f;color:#fff;border-color:#2d6a4f}
+.part-chip.done{border-color:#86efac;background:#f0fdf4;color:#166534}
+.part-chip.has-wrong{border-color:#fbbf24;background:#fffbeb;color:#92400e}
+.part-chip.vocab{background:#fffef5;border-color:#fde68a;color:#92400e}
+.part-chip.vocab.active{background:#d97706;color:#fff;border-color:#d97706}
+.chip-count{font-size:10px;opacity:.6;margin-left:3px}
+.progress-bar-wrap{background:#fffcf8;border:1px solid #e0d8cf;border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.progress-header{display:flex;justify-content:space-between;font-size:12px;color:#8b7e74;margin-bottom:6px}
+.progress-track{height:6px;background:#e8e1d8;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2d6a4f,#16a34a);border-radius:3px;transition:width .4s ease}
+.sentence-card{background:#fffcf8;border:1px solid #e0d8cf;border-radius:16px;padding:28px 24px;box-shadow:0 4px 24px rgba(61,52,41,.06);margin-bottom:16px;animation:fadeIn .35s ease-out}
+.sentence-num{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b0a69c;margin-bottom:12px}
+.sentence-round{font-size:10px;color:#dc6843;font-weight:600;margin-left:8px}
+.audio-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.play-btn{display:flex;align-items:center;gap:6px;padding:10px 18px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s}
+.play-btn:hover{transform:translateY(-1px)}.play-btn:disabled{opacity:.4;cursor:default;transform:none}
+.play-btn.normal{background:#3d3429;color:#faf6f1}.play-btn.slow{background:#fef0e8;color:#dc6843}
+.play-count{font-family:'DM Mono',monospace;font-size:11px;color:#b0a69c}
+.judge-row{display:flex;gap:12px;justify-content:center;margin:20px 0}
+.judge-btn{flex:1;max-width:120px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 0;border-radius:14px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s}
+.judge-btn:hover{transform:translateY(-2px)}.judge-btn:disabled{opacity:.35;cursor:default;transform:none}
+.judge-btn.btn-correct{background:#e8f5e9;color:#1b7a3d}.judge-btn.btn-partial{background:#fef3c7;color:#92400e}.judge-btn.btn-wrong{background:#fef0e8;color:#c0392b}
+.judge-icon{font-size:28px}
+.answer-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px 18px;margin-top:14px;animation:fadeIn .3s ease-out}
+.answer-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#2d6a4f;text-transform:uppercase;margin-bottom:6px}
+.answer-text{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:#2d2519;line-height:1.6}
+.ja-toggle{display:inline-flex;align-items:center;gap:4px;margin-top:10px;padding:5px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:12px;color:#1e40af;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-weight:600;transition:all .15s}
+.ja-toggle:hover{background:#dbeafe}
+.ja-text{font-size:14px;color:#5a4f43;margin-top:8px;padding:8px 12px;background:#faf6f1;border-radius:8px;line-height:1.6;animation:fadeIn .2s ease-out}
+.memo-area{width:100%;min-height:50px;padding:10px 12px;margin-top:12px;border:1px solid #ddd5cc;border-radius:8px;font-size:13px;line-height:1.5;resize:vertical;background:#fffef5;font-family:'Noto Sans JP',sans-serif;color:#3d3429}
+.memo-area:focus{outline:none;border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.1)}
+.memo-label{font-size:11px;color:#8b7e74;font-weight:600;margin-top:12px;display:block}
+.next-btn{display:block;width:100%;padding:14px;background:#3d3429;color:#faf6f1;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:transform .15s;margin-top:16px}
+.next-btn:hover{transform:translateY(-1px)}
+.result-card{background:#fffcf8;border:1px solid #e0d8cf;border-radius:16px;padding:32px 24px;text-align:center;box-shadow:0 4px 24px rgba(61,52,41,.06);animation:fadeIn .4s ease-out}
+.result-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:500;margin-bottom:20px;color:#2d2519}
+.result-stats{display:flex;justify-content:center;gap:0;margin-bottom:20px}
+.r-stat{flex:1;padding:0 16px;text-align:center}.r-stat+.r-stat{border-left:1px solid #e8e0d8}
+.r-num{font-size:28px;font-weight:700;display:block;font-family:'DM Mono',monospace}
+.r-num.green{color:#16a34a}.r-num.orange{color:#d97706}.r-num.red{color:#dc2626}
+.r-label{font-size:11px;color:#8b7e74;margin-top:2px;display:block}
+.result-info{border-radius:10px;padding:10px 16px;margin-bottom:14px;font-size:12px}
+.result-info.info-green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.result-info.info-orange{background:#fef3c7;border:1px solid #fde68a;color:#92400e}
+.restart-btn{background:#3d3429;color:#faf6f1;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:transform .15s;margin:6px}
+.restart-btn:hover{transform:translateY(-1px)}.restart-btn.secondary{background:none;color:#3d3429;border:1px solid #d9cfc4}
+.vocab-card{background:#fffcf8;border:1px solid #e0d8cf;border-radius:16px;min-height:240px;padding:36px 28px;cursor:pointer;position:relative;box-shadow:0 4px 24px rgba(61,52,41,.06);transition:box-shadow .3s;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:16px;animation:fadeIn .35s ease-out;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.vocab-card:hover{box-shadow:0 6px 28px rgba(61,52,41,.09)}.vocab-card.flipped{border-color:#c8bfb3}
+.card-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;transition:opacity .25s ease}
+.card-face.hidden{opacity:0;pointer-events:none}
+.card-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b0a69c;margin-bottom:16px}
+.card-main{font-size:26px;font-weight:500;text-align:center;line-height:1.4;color:#2d2519}
+.tap-label{position:absolute;bottom:20px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:#c4b9ad}
+.card-answer{font-family:'DM Mono',monospace;font-size:30px;font-weight:500;color:#2d6a4f;text-align:center}
+.card-answer-ja{font-size:14px;color:#8b7e74;margin-top:10px;text-align:center}
+.card-example{font-family:'DM Mono',monospace;font-size:12px;color:#8b7e74;margin-top:12px;text-align:center;padding:8px 12px;background:rgba(61,52,41,.04);border-radius:8px;line-height:1.6}
+.speak-btn{background:none;border:1px solid #ddd5cc;border-radius:8px;padding:4px 10px;font-size:18px;cursor:pointer;margin-top:8px;transition:all .15s;line-height:1}
+.speak-btn:hover{background:#f0ebe4;border-color:#b0a69c}
+.card-badges{position:absolute;top:12px;right:14px;display:flex;gap:4px}
+.vocab-part-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace;color:#2563eb;background:#eff6ff}
+.wrong-count-badge{font-size:10px;font-weight:700;background:#fef0e8;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace;color:#dc6843}
+.vocab-judge-row{display:flex;gap:16px;justify-content:center;margin-top:20px}
+.vocab-btn{width:72px;height:72px;border-radius:50%;border:none;font-size:32px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.vocab-btn:hover{transform:translateY(-2px)}.vocab-btn:disabled{opacity:.35;cursor:default;transform:none}
+.vocab-btn.vb-wrong{background:#fef0e8;color:#c0392b}.vocab-btn.vb-correct{background:#e8f5e9;color:#1b7a3d}
+.vocab-counter{font-family:'DM Mono',monospace;font-size:14px;color:#8b7e74;text-align:center;margin-bottom:12px}
+.vocab-counter span{opacity:.4}.vocab-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.review-filters{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0}
+.filter-chip{font-size:11px;background:none;border:1px solid #ddd5cc;border-radius:6px;padding:5px 12px;color:#8b7e74;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .2s}
+.filter-chip.active{background:#3d3429;color:#faf6f1;border-color:#3d3429}
+.review-item{background:#fffcf8;border:1px solid #e0d8cf;border-radius:12px;padding:14px 16px;margin-bottom:10px;animation:fadeIn .3s ease-out;border-left:4px solid #e0d8cf}
+.review-item.ri-wrong{border-left-color:#dc2626}.review-item.ri-partial{border-left-color:#f59e0b}
+.review-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.review-item-loc{font-family:'DM Mono',monospace;font-size:11px;color:#8b7e74}
+.review-item-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.badge-wrong{color:#dc2626;background:#fee2e2}.badge-partial{color:#d97706;background:#fef3c7}.badge-correct{color:#16a34a;background:#dcfce7}
+.review-item-text{font-family:'DM Mono',monospace;font-size:14px;color:#2d2519;margin-bottom:4px;line-height:1.5}
+.review-item-ja{font-size:12px;color:#5a4f43;margin-top:2px}
+.review-item-memo{font-size:12px;color:#92400e;background:#fffef5;padding:6px 10px;border-radius:6px;border:1px solid #fde68a;margin-top:6px}
+.review-empty{text-align:center;color:#b0a69c;padding:40px 20px;font-size:14px}
+.manage-card{background:#fffcf8;border:1px solid #e0d8cf;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(61,52,41,.04)}
+.manage-title{font-size:14px;font-weight:700;color:#3d3429;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.m-sent-list{margin-top:10px}
+.m-sent-item{display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid #eee5dd;font-size:13px}
+.m-sent-item:last-child{border-bottom:none}
+.m-sent-en{flex:1;font-family:'DM Mono',monospace;color:#2d2519}
+.m-sent-ja{font-size:11px;color:#8b7e74;margin-top:2px}
+.settings-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0;padding:12px 16px;background:#fffcf8;border:1px solid #e0d8cf;border-radius:10px}
+.settings-label{font-size:12px;font-weight:600;color:#5a4f43}
+.voice-select{padding:5px 10px;border:1px solid #ddd5cc;border-radius:6px;font-size:12px;background:#faf6f1;font-family:'Noto Sans JP',sans-serif}
+.speed-wrap{display:flex;align-items:center;gap:6px;margin-left:auto}
+.speed-wrap input[type=range]{width:80px;accent-color:#3d3429}
+.speed-val{font-family:'DM Mono',monospace;font-size:12px;color:#8b7e74;min-width:35px}
+.data-bar{background:#fffcf8;border:1px solid #e0d8cf;border-radius:12px;padding:14px 16px;margin:16px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.data-title{font-size:12px;font-weight:600;color:#3d3429}.data-btns{display:flex;gap:6px}
+.data-btn{display:flex;align-items:center;gap:4px;background:none;border:1px solid #ddd5cc;border-radius:7px;padding:5px 12px;font-size:11px;color:#5a4f43;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s}
+.data-btn:hover{background:#f0ebe4;border-color:#b0a69c}
+.data-btn.primary{background:#2d6a4f;color:#fff;border-color:#2d6a4f}
+.data-btn.danger{color:#dc2626;border-color:#fca5a5}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.15);animation:fadeIn .3s ease-out;font-family:'Noto Sans JP',sans-serif;display:none}
+.toast.show{display:block}
+.toast-success{background:#16a34a;color:#fff}.toast-info{background:#3d3429;color:#faf6f1}.toast-warn{background:#dc6843;color:#fff}
+.m-move-btns{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.m-arrow{background:none;border:1px solid #e0d8cf;color:#8b7e74;cursor:pointer;font-size:11px;padding:1px 6px;border-radius:4px;line-height:1.2}
+.m-arrow:hover{background:#f0ebe4;color:#3d3429;border-color:#b0a69c}
+.m-arrow:disabled{opacity:.2;cursor:default;background:none}
+.m-edit-btn{background:none;border:none;color:#8b7e74;cursor:pointer;font-size:15px;padding:2px 6px;border-radius:4px;flex-shrink:0}
+.m-edit-btn:hover{background:#f0ebe4;color:#3d3429}
+.m-sent-del{background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;flex-shrink:0}
+.m-sent-del:hover{background:#fef2f2}
+.m-btn-row{display:flex;gap:8px;margin-top:14px;justify-content:flex-end}
+.m-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;border:1px solid #ddd5cc;background:none;color:#5a4f43;transition:all .15s}
+.m-btn:hover{background:#f0ebe4;border-color:#b0a69c}
+.m-btn.primary{background:#2d6a4f;color:#fff;border-color:#2d6a4f}
+.m-btn.primary:hover{background:#245a42}
+.m-label{font-size:11px;font-weight:500;color:#8b7e74;display:block;margin-bottom:4px;margin-top:10px}
+.m-input{width:100%;padding:8px 12px;border:1px solid #ddd5cc;border-radius:8px;font-size:14px;background:#faf6f1;font-family:'DM Mono',monospace;color:#3d3429}
+.m-input:focus{outline:none;border-color:#b0a69c;box-shadow:0 0 0 3px rgba(61,52,41,.06)}
+.m-move-part{background:none;border:1px solid #dbeafe;color:#2563eb;cursor:pointer;font-size:10px;padding:2px 6px;border-radius:4px;flex-shrink:0;font-family:'Noto Sans JP',sans-serif}
+.m-move-part:hover{background:#eff6ff}
+.hidden{display:none!important}
+#import-file{display:none}
+@media(max-width:480px){.app{padding:0 10px 30px}.header{padding:18px 0 14px}.logo{font-size:22px}.sentence-card{padding:20px 16px}.judge-btn{padding:12px 0}.vocab-card{min-height:200px;padding:28px 20px}.vocab-btn{width:60px;height:60px;font-size:26px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="header">
+    <div class="brand">
+      <span class="logo">NEW HORIZON 1</span>
+      <span class="subtitle">Practice</span>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" id="nav-practice" onclick="switchView('practice')">Practice</button>
+      <button class="nav-btn" id="nav-review" onclick="switchView('review')">Review</button>
+      <button class="nav-btn" id="nav-manage" onclick="switchView('manage')">Manage</button>
+    </nav>
+  </header>
+  <div id="practice-view">
+    <div class="settings-bar">
+      <span class="settings-label">Voice:</span>
+      <select id="voiceSelect" class="voice-select"></select>
+      <div class="speed-wrap">
+        <span class="settings-label">Speed:</span>
+        <input type="range" id="speedRange" min="0.5" max="1.2" step="0.05" value="0.9">
+        <span class="speed-val" id="speedVal">0.9x</span>
+      </div>
+    </div>
+    <div class="unit-nav" id="unitNav"></div>
+    <div class="part-nav" id="mainNav"></div>
+    <div id="practiceContent"></div>
+  </div>
+  <div id="review-view" class="hidden">
+    <div class="unit-nav" id="unitNavReview"></div>
+    <div class="review-filters" id="reviewFilters"></div>
+    <div id="reviewContent"></div>
+  </div>
+  <div id="manage-view" class="hidden">
+    <div class="unit-nav" id="unitNavManage"></div>
+    <div id="manageContent"></div>
+    <div class="data-bar">
+      <div class="data-title">Data</div>
+      <div class="data-btns">
+        <button class="data-btn primary" onclick="exportAllData()">Save All</button>
+        <button class="data-btn" onclick="document.getElementById('import-file').click()">Load</button>
+        <button class="data-btn danger" onclick="resetAllData()">Reset</button>
+      </div>
+    </div>
+    <input type="file" id="import-file" accept=".json" onchange="importAllData(event)">
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const INITIAL_PARTS=[
+  {
+    "id": "u1p1",
+    "label": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Hello, everyone.",
+        "ja": "みなさん、こんにちは。"
+      },
+      {
+        "en": "I'm Edward Trout.",
+        "ja": "私はエドワード・トラウトです。"
+      },
+      {
+        "en": "Call me Eddy.",
+        "ja": "エディと呼んでください。"
+      },
+      {
+        "en": "I'm twelve.",
+        "ja": "私は12歳です。"
+      },
+      {
+        "en": "I'm from South Africa.",
+        "ja": "私は南アフリカ出身です。"
+      },
+      {
+        "en": "I like Japanese sweets.",
+        "ja": "私は和菓子が好きです。"
+      },
+      {
+        "en": "I love daifuku and ammitsu.",
+        "ja": "私は大福とあんみつが大好きです。"
+      },
+      {
+        "en": "I love matcha, too.",
+        "ja": "抹茶も大好きです。"
+      },
+      {
+        "en": "I want to join the sado club!",
+        "ja": "茶道部に入りたいです！"
+      }
+    ]
+  },
+  {
+    "id": "u1p2",
+    "label": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Eddy, do you play rugby?",
+        "ja": "Eddy、ラグビーをしますか？"
+      },
+      {
+        "en": "Yes, I do.",
+        "ja": "うん、好きだよ。"
+      },
+      {
+        "en": "I'm a rugby fan, too.",
+        "ja": "私もラグビーファンなの。"
+      },
+      {
+        "en": "I often watch rugby with my friends.",
+        "ja": "よく友達とラグビーを見るよ。"
+      },
+      {
+        "en": "Great!",
+        "ja": "いいね！"
+      },
+      {
+        "en": "Do you play rugby?",
+        "ja": "あなたはラグビーをしますか？"
+      },
+      {
+        "en": "No, I don't. I don't play rugby, but I play soccer.",
+        "ja": "いえ、しません。私はラグビーをしませんがサッカーをします。"
+      },
+      {
+        "en": "Oh, I play soccer, too.",
+        "ja": "ああ、私もサッカーをしますよ"
+      }
+    ]
+  },
+  {
+    "id": "u1p3",
+    "label": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Do you like comics?",
+        "ja": "あなたは漫画が好きですか?"
+      },
+      {
+        "en": "Yes, I do. I draw comics, too.",
+        "ja": "うん好きだよ。書くこともするよ。"
+      },
+      {
+        "en": "WOW! Are you an anime fan?",
+        "ja": "おお。アニメファンなの？"
+      },
+      {
+        "en": "Yes, I am.",
+        "ja": "うん、そうだよ"
+      },
+      {
+        "en": "So, are you in the manga club?",
+        "ja": "じゃあ、漫画クラブに入ってるの？"
+      },
+      {
+        "en": "No, I'm not.",
+        "ja": "ううん、入ってないよ。"
+      },
+      {
+        "en": "I'm in the art club.",
+        "ja": "美術部に入ってるよ。"
+      },
+      {
+        "en": "How about you?",
+        "ja": "あなたは？"
+      },
+      {
+        "en": "I'm not in a school club now, but I take swimming lessons.",
+        "ja": "今は部活に入っていないけど、水泳のレッスンを受けています。"
+      }
+    ]
+  },
+  {
+    "id": "u2p1",
+    "label": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Ms. Chen, this is Jun.",
+        "ja": "チェン先生、こちらは純です。"
+      },
+      {
+        "en": "He's in Class 1-1.",
+        "ja": "彼は1年1組です。"
+      },
+      {
+        "en": "Jun, this is Ms. Chen.",
+        "ja": "純、こちらはチェン先生です。"
+      },
+      {
+        "en": "She's our new English teacher.",
+        "ja": "彼女は私たちの新しい英語の先生です。"
+      },
+      {
+        "en": "She's from Canada.",
+        "ja": "彼女はカナダ出身です。"
+      },
+      {
+        "en": "Hello, Jun. Nice to meet you.",
+        "ja": "こんにちは、純。はじめまして。"
+      },
+      {
+        "en": "Nice to meet you, too.",
+        "ja": "こちらこそ、はじめまして。"
+      },
+      {
+        "en": "Is he on the soccer team?",
+        "ja": "彼はサッカーチームに入っていますか？"
+      },
+      {
+        "en": "Yes, he is.",
+        "ja": "はい、そうです。"
+      },
+      {
+        "en": "He's good at playing soccer.",
+        "ja": "彼はサッカーをするのが上手です。"
+      },
+      {
+        "en": "Cool!",
+        "ja": "すごい！"
+      }
+    ]
+  },
+  {
+    "id": "u2p2",
+    "label": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Do you like Chinese food, Jun?",
+        "ja": "純、中華料理は好きですか？"
+      },
+      {
+        "en": "Yes, I do.",
+        "ja": "はい、好きです。"
+      },
+      {
+        "en": "My father can make gyoza very well.",
+        "ja": "僕の父はぎょうざをとても上手に作れます。"
+      },
+      {
+        "en": "That's nice.",
+        "ja": "それはいいですね。"
+      },
+      {
+        "en": "Can you make gyoza, too?",
+        "ja": "あなたもぎょうざを作れますか？"
+      },
+      {
+        "en": "Yes, I can.",
+        "ja": "はい、作れます。"
+      },
+      {
+        "en": "Ms. Chen, can you read hiragana?",
+        "ja": "チェン先生、ひらがなは読めますか？"
+      },
+      {
+        "en": "No, I can't, but I can read some kanji.",
+        "ja": "いいえ、読めません。でも漢字はいくつか読めます。"
+      },
+      {
+        "en": "Really?",
+        "ja": "本当ですか？"
+      },
+      {
+        "en": "Yes, my parents are from China.",
+        "ja": "はい、私の両親は中国出身です。"
+      },
+      {
+        "en": "Oh, I see.",
+        "ja": "ああ、なるほど。"
+      }
+    ]
+  },
+  {
+    "id": "u2p3",
+    "label": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Excuse me. Is this your pen?",
+        "ja": "すみません。これはあなたのペンですか？"
+      },
+      {
+        "en": "Oops. Yes, that's my pen.",
+        "ja": "おっと。はい、それは私のペンです。"
+      },
+      {
+        "en": "Here you are.",
+        "ja": "はい、どうぞ。"
+      },
+      {
+        "en": "Thank you.",
+        "ja": "ありがとうございます。"
+      },
+      {
+        "en": "You're welcome.",
+        "ja": "どういたしまして。"
+      },
+      {
+        "en": "Your pen is cool.",
+        "ja": "あなたのペンはかっこいいですね。"
+      },
+      {
+        "en": "This is a totem pole.",
+        "ja": "これはトーテムポールです。"
+      },
+      {
+        "en": "It's from Canada.",
+        "ja": "カナダから来たものです。"
+      },
+      {
+        "en": "Is this a bird?",
+        "ja": "これは鳥ですか？"
+      },
+      {
+        "en": "Yes, it is. It's a thunderbird.",
+        "ja": "はい、そうです。サンダーバードです。"
+      },
+      {
+        "en": "Is this a fox?",
+        "ja": "これはキツネですか？"
+      },
+      {
+        "en": "No, it's not. It's a wolf.",
+        "ja": "いいえ、違います。オオカミです。"
+      }
+    ]
+  },
+  {
+    "id": "u3p1",
+    "label": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Hi, Riko! What's that?",
+        "ja": "こんにちは、理子！それは何？"
+      },
+      {
+        "en": "It's a kamon, a symbol for a family.",
+        "ja": "家紋だよ、家族のシンボルなの。"
+      },
+      {
+        "en": "That's interesting!",
+        "ja": "それはおもしろいね！"
+      },
+      {
+        "en": "It's from my favorite comic.",
+        "ja": "私の大好きなマンガからなの。"
+      },
+      {
+        "en": "What's the comic about?",
+        "ja": "そのマンガは何について？"
+      },
+      {
+        "en": "It's about a samurai.",
+        "ja": "侍についてだよ。"
+      },
+      {
+        "en": "Oh, a samurai!",
+        "ja": "ああ、侍なんだ！"
+      },
+      {
+        "en": "Who's your favorite character?",
+        "ja": "好きなキャラクターは誰？"
+      },
+      {
+        "en": "My favorite character is Kojiro.",
+        "ja": "好きなキャラクターは小次郎だよ。"
+      },
+      {
+        "en": "Why?",
+        "ja": "なぜ？"
+      },
+      {
+        "en": "He's strong and brave.",
+        "ja": "彼は強くて勇敢なんだ。"
+      },
+      {
+        "en": "He's also very kind.",
+        "ja": "彼はとても優しくもあるんだよ。"
+      }
+    ]
+  },
+  {
+    "id": "u3p2",
+    "label": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Ms. Chen, do you live around here?",
+        "ja": "チェン先生、この辺りに住んでいますか？"
+      },
+      {
+        "en": "Yes, I do.",
+        "ja": "はい、住んでいます。"
+      },
+      {
+        "en": "How do you come to school? By bike?",
+        "ja": "どうやって学校に来ますか？自転車で？"
+      },
+      {
+        "en": "No, I walk.",
+        "ja": "いいえ、歩きです。"
+      },
+      {
+        "en": "When do you come to our school?",
+        "ja": "いつ私たちの学校に来ますか？"
+      },
+      {
+        "en": "I come on Mondays and Fridays.",
+        "ja": "月曜日と金曜日に来ます。"
+      },
+      {
+        "en": "I see. What do you do after school?",
+        "ja": "そうなんだ。放課後は何をしますか？"
+      },
+      {
+        "en": "I usually study Japanese online.",
+        "ja": "たいていオンラインで日本語を勉強します。"
+      },
+      {
+        "en": "Wow!",
+        "ja": "すごい！"
+      }
+    ]
+  },
+  {
+    "id": "u3p3",
+    "label": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "dictation",
+    "sentences": [
+      {
+        "en": "Hi, Jun. Where do you practice on rainy days?",
+        "ja": "こんにちは、純。雨の日はどこで練習するの？"
+      },
+      {
+        "en": "We practice in the hallway.",
+        "ja": "廊下で練習するよ。"
+      },
+      {
+        "en": "You practice very hard.",
+        "ja": "すごく一生懸命練習してるね。"
+      },
+      {
+        "en": "Yes. We want to win the next game.",
+        "ja": "うん。次の試合に勝ちたいんだ。"
+      },
+      {
+        "en": "Good luck!",
+        "ja": "がんばって！"
+      },
+      {
+        "en": "When's the next game?",
+        "ja": "次の試合はいつ？"
+      },
+      {
+        "en": "It's on July 5th.",
+        "ja": "7月5日だよ。"
+      },
+      {
+        "en": "I want to go and see the game!",
+        "ja": "試合を見に行きたい！"
+      },
+      {
+        "en": "Oh, really? It's at Midori Park.",
+        "ja": "え、本当？みどり公園であるよ。"
+      },
+      {
+        "en": "Where's that?",
+        "ja": "それはどこ？"
+      },
+      {
+        "en": "It's near the station.",
+        "ja": "駅の近くだよ。"
+      }
+    ]
+  }
+];
+const VOCAB_DATA=[
+  {
+    "en": "call",
+    "ja": "～を…と呼ぶ",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "Call me Eddy."
+  },
+  {
+    "en": "South Africa",
+    "ja": "南アフリカ",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "I'm from South Africa."
+  },
+  {
+    "en": "love",
+    "ja": "大好きだ、愛する",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "I love daifuku and ammitsu."
+  },
+  {
+    "en": "want to",
+    "ja": "～したい",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "I want to join the sado club!"
+  },
+  {
+    "en": "everyone",
+    "ja": "みなさん、みんな",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "Hello, everyone."
+  },
+  {
+    "en": "me",
+    "ja": "私を、私に",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "Call me Eddy."
+  },
+  {
+    "en": "from",
+    "ja": "～出身の、～から",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I'm from South Africa."
+  },
+  {
+    "en": "Japanese",
+    "ja": "日本の、日本語",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I like Japanese sweets."
+  },
+  {
+    "en": "sweet(s)",
+    "ja": "お菓子、甘い",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I like Japanese sweets."
+  },
+  {
+    "en": "and",
+    "ja": "～と…、そして",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I love daifuku and ammitsu."
+  },
+  {
+    "en": "too",
+    "ja": "～も、～もまた",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I love matcha, too."
+  },
+  {
+    "en": "join",
+    "ja": "参加する、入る",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I want to join the sado club!"
+  },
+  {
+    "en": "the",
+    "ja": "その（特定のものを指す）",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I want to join the sado club!"
+  },
+  {
+    "en": "club",
+    "ja": "クラブ、部",
+    "part": "U1 Part 1",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I want to join the sado club!"
+  },
+  {
+    "en": "fan",
+    "ja": "ファン",
+    "part": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "Are you an anime fan?"
+  },
+  {
+    "en": "often",
+    "ja": "よく、しばしば",
+    "part": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "I often watch rugby with my friends."
+  },
+  {
+    "en": "with",
+    "ja": "～と一緒に",
+    "part": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "I often watch rugby with my friends."
+  },
+  {
+    "en": "but",
+    "ja": "しかし、でも",
+    "part": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "I don't play rugby, but I play soccer."
+  },
+  {
+    "en": "rugby",
+    "ja": "ラグビー",
+    "part": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "Do you play rugby?"
+  },
+  {
+    "en": "watch",
+    "ja": "見る、観る",
+    "part": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I often watch rugby."
+  },
+  {
+    "en": "great",
+    "ja": "すごい",
+    "part": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": ""
+  },
+  {
+    "en": "friend(s)",
+    "ja": "友達",
+    "part": "U1 Part 2",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I often watch rugby with my friends."
+  },
+  {
+    "en": "lesson(s)",
+    "ja": "レッスン、授業",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "I take swimming lessons."
+  },
+  {
+    "en": "about",
+    "ja": "～について",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "How about you?"
+  },
+  {
+    "en": "so",
+    "ja": "じゃあ、それで",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "So, are you in the manga club?"
+  },
+  {
+    "en": "anime",
+    "ja": "アニメ",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "Are you an anime fan?"
+  },
+  {
+    "en": "an",
+    "ja": "一つの（母音の前）",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "Are you an anime fan?"
+  },
+  {
+    "en": "draw",
+    "ja": "描く",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "new",
+    "example": "I draw comics, too."
+  },
+  {
+    "en": "comic(s)",
+    "ja": "漫画",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "Do you like comics?"
+  },
+  {
+    "en": "wow",
+    "ja": "わあ、すごい",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "Wow! Are you an anime fan?"
+  },
+  {
+    "en": "art",
+    "ja": "美術、芸術",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I'm in the art club."
+  },
+  {
+    "en": "in",
+    "ja": "～の中に",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I'm in the art club."
+  },
+  {
+    "en": "are",
+    "ja": "～です（you/we/they）",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "Are you in the manga club?"
+  },
+  {
+    "en": "how",
+    "ja": "どのように",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "How about you?"
+  },
+  {
+    "en": "school",
+    "ja": "学校",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I'm not in a school club now."
+  },
+  {
+    "en": "now",
+    "ja": "今",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I'm not in a school club now."
+  },
+  {
+    "en": "take",
+    "ja": "取る、受ける",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I take swimming lessons."
+  },
+  {
+    "en": "swimming",
+    "ja": "水泳",
+    "part": "U1 Part 3",
+    "unit": "Unit 1",
+    "type": "review",
+    "example": "I take swimming lessons."
+  },
+  {
+    "en": "class",
+    "ja": "学級、クラス",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "He's in Class 1-1."
+  },
+  {
+    "en": "our",
+    "ja": "私たちの",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "She's our new English teacher."
+  },
+  {
+    "en": "Canada",
+    "ja": "カナダ",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "She's from Canada."
+  },
+  {
+    "en": "America",
+    "ja": "アメリカ",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": ""
+  },
+  {
+    "en": "be good at",
+    "ja": "～が得意だ、～が上手だ",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "He's good at playing soccer."
+  },
+  {
+    "en": "Ms.",
+    "ja": "～先生、～さん（女性）",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Jun, this is Ms. Chen."
+  },
+  {
+    "en": "Mr.",
+    "ja": "～先生、～さん（男性）",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": ""
+  },
+  {
+    "en": "he",
+    "ja": "彼は",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "He's in Class 1-1."
+  },
+  {
+    "en": "she",
+    "ja": "彼女は",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "She's our new English teacher."
+  },
+  {
+    "en": "new",
+    "ja": "新しい",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "She's our new English teacher."
+  },
+  {
+    "en": "teacher",
+    "ja": "先生",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "She's our new English teacher."
+  },
+  {
+    "en": "on",
+    "ja": "～に所属して",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Is he on the soccer team?"
+  },
+  {
+    "en": "team",
+    "ja": "チーム",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Is he on the soccer team?"
+  },
+  {
+    "en": "at",
+    "ja": "～が（be good at）",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "He's good at playing soccer."
+  },
+  {
+    "en": "cool",
+    "ja": "すごい、かっこいい",
+    "part": "U2 Part 1",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Cool!"
+  },
+  {
+    "en": "Chinese",
+    "ja": "中国の、中華の",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "Do you like Chinese food, Jun?"
+  },
+  {
+    "en": "cannot",
+    "ja": "～できない（can not）",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "No, I can't, but I can read some kanji."
+  },
+  {
+    "en": "some",
+    "ja": "いくつかの",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "I can read some kanji."
+  },
+  {
+    "en": "parent",
+    "ja": "親",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "My parents are from China."
+  },
+  {
+    "en": "China",
+    "ja": "中国",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "My parents are from China."
+  },
+  {
+    "en": "food",
+    "ja": "食べ物",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Do you like Chinese food, Jun?"
+  },
+  {
+    "en": "father",
+    "ja": "お父さん",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "My father can make gyoza very well."
+  },
+  {
+    "en": "can",
+    "ja": "～できる",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "My father can make gyoza very well."
+  },
+  {
+    "en": "make",
+    "ja": "作る",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Can you make gyoza, too?"
+  },
+  {
+    "en": "very",
+    "ja": "とても",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "My father can make gyoza very well."
+  },
+  {
+    "en": "well",
+    "ja": "上手に",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "My father can make gyoza very well."
+  },
+  {
+    "en": "that",
+    "ja": "あれは、それは",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "That's nice."
+  },
+  {
+    "en": "read",
+    "ja": "読む",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Can you read hiragana?"
+  },
+  {
+    "en": "really",
+    "ja": "本当に",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Really?"
+  },
+  {
+    "en": "see",
+    "ja": "わかる、見る",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Oh, I see."
+  },
+  {
+    "en": "I see.",
+    "ja": "なるほど。",
+    "part": "U2 Part 2",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "Oh, I see."
+  },
+  {
+    "en": "excuse",
+    "ja": "許す、すみません",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "Excuse me. Is this your pen?"
+  },
+  {
+    "en": "oops",
+    "ja": "おっと",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "Oops. Yes, that's my pen."
+  },
+  {
+    "en": "here",
+    "ja": "ここに、さあ",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "Here you are."
+  },
+  {
+    "en": "welcome",
+    "ja": "どういたしまして",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "You're welcome."
+  },
+  {
+    "en": "totem pole",
+    "ja": "トーテムポール",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "This is a totem pole."
+  },
+  {
+    "en": "thunderbird",
+    "ja": "サンダーバード",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "It's a thunderbird."
+  },
+  {
+    "en": "your",
+    "ja": "あなたの",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Is this your pen?"
+  },
+  {
+    "en": "thank",
+    "ja": "感謝する",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Thank you."
+  },
+  {
+    "en": "it",
+    "ja": "それは",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "It's from Canada."
+  },
+  {
+    "en": "bird",
+    "ja": "鳥",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "review",
+    "example": "Is this a bird?"
+  },
+  {
+    "en": "Excuse me.",
+    "ja": "すみません。",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "Excuse me. Is this your pen?"
+  },
+  {
+    "en": "Here you are.",
+    "ja": "はい、どうぞ。",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "Here you are."
+  },
+  {
+    "en": "Thank you.",
+    "ja": "ありがとうございます。",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "Thank you."
+  },
+  {
+    "en": "You're welcome.",
+    "ja": "どういたしまして。",
+    "part": "U2 Part 3",
+    "unit": "Unit 2",
+    "type": "new",
+    "example": "You're welcome."
+  },
+  {
+    "en": "symbol",
+    "ja": "シンボル、象徴",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "It's a kamon, a symbol for a family."
+  },
+  {
+    "en": "for",
+    "ja": "～のための",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "It's a kamon, a symbol for a family."
+  },
+  {
+    "en": "interesting",
+    "ja": "おもしろい、興味深い",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "That's interesting!"
+  },
+  {
+    "en": "favorite",
+    "ja": "お気に入りの、一番好きな",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "It's from my favorite comic."
+  },
+  {
+    "en": "character",
+    "ja": "キャラクター、登場人物",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "Who's your favorite character?"
+  },
+  {
+    "en": "also",
+    "ja": "～もまた",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "He's also very kind."
+  },
+  {
+    "en": "what",
+    "ja": "何",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "What's that?"
+  },
+  {
+    "en": "family",
+    "ja": "家族",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "It's a kamon, a symbol for a family."
+  },
+  {
+    "en": "who",
+    "ja": "だれ",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "Who's your favorite character?"
+  },
+  {
+    "en": "why",
+    "ja": "なぜ、どうして",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "Why?"
+  },
+  {
+    "en": "brave",
+    "ja": "勇敢な",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "He's strong and brave."
+  },
+  {
+    "en": "kind",
+    "ja": "親切な、優しい",
+    "part": "U3 Part 1",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "He's also very kind."
+  },
+  {
+    "en": "around",
+    "ja": "～の周りに、この辺りに",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "Do you live around here?"
+  },
+  {
+    "en": "after",
+    "ja": "～のあとに",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "What do you do after school?"
+  },
+  {
+    "en": "online",
+    "ja": "オンラインで",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "I usually study Japanese online."
+  },
+  {
+    "en": "after school",
+    "ja": "放課後",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "What do you do after school?"
+  },
+  {
+    "en": "live",
+    "ja": "住む、生きる",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "Do you live around here?"
+  },
+  {
+    "en": "come",
+    "ja": "来る",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "How do you come to school?"
+  },
+  {
+    "en": "by",
+    "ja": "～で（手段）",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "By bike?"
+  },
+  {
+    "en": "walk",
+    "ja": "歩く",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "No, I walk."
+  },
+  {
+    "en": "when",
+    "ja": "いつ",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "When do you come to our school?"
+  },
+  {
+    "en": "study",
+    "ja": "勉強する",
+    "part": "U3 Part 2",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "I usually study Japanese online."
+  },
+  {
+    "en": "hallway",
+    "ja": "廊下",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "We practice in the hallway."
+  },
+  {
+    "en": "win",
+    "ja": "勝つ",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "We want to win the next game."
+  },
+  {
+    "en": "next",
+    "ja": "次の",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "We want to win the next game."
+  },
+  {
+    "en": "luck",
+    "ja": "運、幸運",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "Good luck!"
+  },
+  {
+    "en": "near",
+    "ja": "～の近くに",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "It's near the station."
+  },
+  {
+    "en": "where",
+    "ja": "どこ",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "Where do you practice on rainy days?"
+  },
+  {
+    "en": "practice",
+    "ja": "練習する、練習",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "Where do you practice on rainy days?"
+  },
+  {
+    "en": "hard",
+    "ja": "一生懸命に、難しい",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "You practice very hard."
+  },
+  {
+    "en": "go",
+    "ja": "行く",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "I want to go and see the game!"
+  },
+  {
+    "en": "park",
+    "ja": "公園",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "It's at Midori Park."
+  },
+  {
+    "en": "station",
+    "ja": "駅",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": "It's near the station."
+  },
+  {
+    "en": "under",
+    "ja": "～の下に",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "review",
+    "example": ""
+  },
+  {
+    "en": "Good luck.",
+    "ja": "がんばって。幸運を祈る。",
+    "part": "U3 Part 3",
+    "unit": "Unit 3",
+    "type": "new",
+    "example": "Good luck!"
+  }
+];
+const VOCAB_PARTS=["All", "U1 Part 1", "U1 Part 2", "U1 Part 3", "U2 Part 1", "U2 Part 2", "U2 Part 3", "U3 Part 1", "U3 Part 2", "U3 Part 3"];
+const UNITS=["Unit 1", "Unit 2", "Unit 3"];
+const DATA_VERSION=9+'-'+92;
+const STORAGE_KEY='new_horizon_1';
+const PARTS_KEY=STORAGE_KEY+'_parts';
+const VOCAB_RESULT_KEY=STORAGE_KEY+'_vocab';
+const VERSION_KEY=STORAGE_KEY+'_version';
+let PARTS=loadParts();
+function loadParts(){try{const sv=localStorage.getItem(VERSION_KEY);const s=localStorage.getItem(PARTS_KEY);if(s&&sv===String(DATA_VERSION)){const parsed=JSON.parse(s);if(parsed.length>0&&parsed[0].unit)return parsed;}}catch(e){}return JSON.parse(JSON.stringify(INITIAL_PARTS));}
+function saveParts(){localStorage.setItem(PARTS_KEY,JSON.stringify(PARTS));localStorage.setItem(VERSION_KEY,String(DATA_VERSION));}
+function normSent(s){if(typeof s==='string')return{en:s,ja:''};return{en:s.en||'',ja:s.ja||''};}
+PARTS.forEach(p=>{if(p.sentences)p.sentences=p.sentences.map(normSent);});saveParts();
+let state={currentUnit:UNITS[0],currentPart:0,currentSentence:0,round:1,maxRounds:3,sessionQueue:[],results:loadResults(),vocabResults:loadVocabResults(),view:'practice',mode:'dictation',reviewFilter:'all',vocabFlipped:false,vocabQueue:[],vocabIdx:0,vocabFilterPart:'All'};
+function loadResults(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch(e){return {};}}
+function saveResults(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state.results));}
+function loadVocabResults(){try{return JSON.parse(localStorage.getItem(VOCAB_RESULT_KEY))||{};}catch(e){return {};}}
+function saveVocabResults(){localStorage.setItem(VOCAB_RESULT_KEY,JSON.stringify(state.vocabResults));}
+function getKey(pi,si){return pi+'-'+si;}
+function getResult(pi,si){return state.results[getKey(pi,si)]||{judgment:null,playCount:0,memo:'',lastDate:null,history:[]};}
+function setResult(pi,si,data){const k=getKey(pi,si);state.results[k]={...getResult(pi,si),...data,lastDate:new Date().toISOString()};saveResults();}
+function getVocabResult(en){return state.vocabResults[en]||{correct:0,wrong:0};}
+function setVocabResult(en,data){state.vocabResults[en]={...getVocabResult(en),...data};saveVocabResults();}
+let voices=[],selectedVoice=null;
+function loadVoices(){voices=speechSynthesis.getVoices().filter(v=>v.lang.startsWith('en'));const sel=document.getElementById('voiceSelect');const saved=localStorage.getItem(STORAGE_KEY+'_voice');sel.innerHTML='';voices.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=v.name.substring(0,30)+' ('+v.lang+')';if(saved&&v.name===saved)o.selected=true;sel.appendChild(o);});selectedVoice=voices[sel.value]||voices[0];sel.onchange=()=>{selectedVoice=voices[sel.value];if(selectedVoice)localStorage.setItem(STORAGE_KEY+'_voice',selectedVoice.name);};}
+speechSynthesis.onvoiceschanged=loadVoices;loadVoices();
+const speedRange=document.getElementById('speedRange'),speedVal=document.getElementById('speedVal');
+const savedSpeed=localStorage.getItem(STORAGE_KEY+'_speed');if(savedSpeed)speedRange.value=savedSpeed;
+speedVal.textContent=speedRange.value+'x';
+speedRange.oninput=()=>{speedVal.textContent=speedRange.value+'x';localStorage.setItem(STORAGE_KEY+'_speed',speedRange.value);};
+function speak(text,rate){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.voice=selectedVoice;u.rate=rate||parseFloat(speedRange.value);u.pitch=1;speechSynthesis.speak(u);}
+function speakWithExample(word,example){speechSynthesis.cancel();const u1=new SpeechSynthesisUtterance(word);u1.voice=selectedVoice;u1.rate=parseFloat(speedRange.value);u1.pitch=1;if(example){u1.onend=()=>{setTimeout(()=>{const u2=new SpeechSynthesisUtterance(example);u2.voice=selectedVoice;u2.rate=parseFloat(speedRange.value);u2.pitch=1;speechSynthesis.speak(u2);},400);};}speechSynthesis.speak(u1);}
+function speakVocabCurrent(){const w=state.vocabQueue[state.vocabIdx];if(w)speakWithExample(w.en,w.example||'');}
+document.addEventListener('keydown',(e)=>{if(e.code==='Space'&&state.mode==='vocab'&&state.view==='practice'){e.preventDefault();if(!state.vocabFlipped){flipVocabCard();}};});
+function getUnitParts(unitName){return PARTS.map((p,i)=>({...p,globalIdx:i})).filter(p=>p.unit===unitName);}
+function getUnitVocab(unitName){return VOCAB_DATA.filter(v=>v.unit===unitName);}
+function switchView(v){state.view=v;['practice','review','manage'].forEach(id=>{document.getElementById(id+'-view').classList.toggle('hidden',v!==id);document.getElementById('nav-'+id).classList.toggle('active',v===id);});if(v==='review')renderReview();if(v==='manage')renderManage();if(v==='practice'){renderUnitNav('unitNav');renderMainNav();};}
+function renderUnitNav(containerId){const nav=document.getElementById(containerId);nav.innerHTML='';UNITS.forEach(u=>{const b=document.createElement('button');b.className='unit-tab'+(state.currentUnit===u?' active':'');b.textContent=u;b.onclick=()=>{state.currentUnit=u;state.mode='dictation';const unitParts=getUnitParts(u);if(unitParts.length>0){state.currentPart=unitParts[0].globalIdx;}if(state.view==='practice'){renderUnitNav('unitNav');renderMainNav();startDictation();}else if(state.view==='review'){renderUnitNav('unitNavReview');renderReview();}else if(state.view==='manage'){renderUnitNav('unitNavManage');renderManage();}};nav.appendChild(b);});}
+function getPartLastDate(pi){const part=PARTS[pi];if(!part||!part.sentences)return null;let latest=null;for(let s=0;s<part.sentences.length;s++){const r=getResult(pi,s);if(r.lastDate){if(!latest||r.lastDate>latest)latest=r.lastDate;}}return latest;}
+function formatDateShort(iso){if(!iso)return '';const d=new Date(iso);const m=d.getMonth()+1,day=d.getDate();return m+'/'+day;}
+function renderMainNav(){const nav=document.getElementById('mainNav');nav.innerHTML='';const unitParts=getUnitParts(state.currentUnit);unitParts.forEach(p=>{const i=p.globalIdx;const c=document.createElement('button');let cls='part-chip';if(state.mode==='dictation'&&i===state.currentPart)cls+=' active';if(p.sentences){let allDone=true,hasWrong=false;for(let s=0;s<p.sentences.length;s++){const r=getResult(i,s);if(!r.judgment)allDone=false;if(r.judgment==='wrong'||r.judgment==='partial')hasWrong=true;}if(state.mode!=='dictation'||i!==state.currentPart){if(allDone&&!hasWrong)cls+=' done';else if(hasWrong)cls+=' has-wrong';}}c.className=cls;const shortLabel=p.label.replace(/^U\d+\s*/,'');const lastDate=getPartLastDate(i);c.innerHTML=shortLabel+(lastDate?' <span class="chip-count" style="font-size:9px;opacity:.5">'+formatDateShort(lastDate)+'</span>':'');c.onclick=()=>{state.mode='dictation';state.currentPart=i;startDictation();};nav.appendChild(c);});const unitVocab=getUnitVocab(state.currentUnit);if(unitVocab.length>0){const vc=document.createElement('button');vc.className='part-chip vocab'+(state.mode==='vocab'?' active':'');vc.innerHTML='単語 <span class="chip-count">('+unitVocab.length+')</span>';vc.onclick=()=>{state.mode='vocab';renderMainNav();startVocab();};nav.appendChild(vc);}}
+function startDictation(forceAll){renderMainNav();const part=PARTS[state.currentPart];if(!part||!part.sentences)return;state.round=1;if(forceAll){state.sessionQueue=part.sentences.map((_,i)=>i);}else{state.sessionQueue=part.sentences.map((_,i)=>i).filter(i=>{const r=getResult(state.currentPart,i);return r.judgment!=='correct';});if(state.sessionQueue.length===0){const skipped=part.sentences.length;const area=document.getElementById('practiceContent');area.innerHTML=`<div class="result-card"><div class="result-title">All Clear!</div><div class="result-info info-green">全 ${skipped} 文すべてOK済みです</div><button class="restart-btn" onclick="startDictation(true)">全問やり直す</button><button class="restart-btn secondary" onclick="resetPartJudgments()">リセットして最初から</button></div>`;renderMainNav();return;}}state.currentSentence=0;renderDictation();}
+function resetPartJudgments(){const part=PARTS[state.currentPart];if(!part||!part.sentences)return;for(let i=0;i<part.sentences.length;i++){const r=getResult(state.currentPart,i);r.judgment=null;setResult(state.currentPart,i,r);}startDictation();}
+function renderDictation(){const area=document.getElementById('practiceContent');const part=PARTS[state.currentPart];if(state.currentSentence>=state.sessionQueue.length){finishDictationRound();return;}const si=state.sessionQueue[state.currentSentence];const sent=part.sentences[si];const r=getResult(state.currentPart,si);const total=state.sessionQueue.length,done=state.currentSentence;const pct=total>0?Math.round((done/total)*100):0;const shortLabel=part.label.replace(/^U\d+\s*/,'');area.innerHTML=`<div class="progress-bar-wrap"><div class="progress-header"><span>${shortLabel} ${state.round>1?'(Round '+state.round+')':''}</span><span>${done} / ${total}${part.sentences.length>total?' <span style="font-size:10px;color:#16a34a">('+( part.sentences.length-total)+' skipped)</span>':''}</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div><div class="sentence-card" id="sentenceCard"><div class="sentence-num">Sentence ${si+1} / ${part.sentences.length}${state.round>1?'<span class="sentence-round">Round '+state.round+'</span>':''}</div><div class="audio-row"><button class="play-btn normal" onclick="playDictation(${si})"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Play</button><button class="play-btn slow" onclick="playDictationSlow(${si})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Slow</button><span class="play-count" id="playCount-${si}">Played: ${r.playCount||0}</span></div><div class="judge-row" id="judgeRow"><button class="judge-btn btn-correct" onclick="judgeDictation(${si},'correct')"><span class="judge-icon">&#9675;</span>OK</button><button class="judge-btn btn-partial" onclick="judgeDictation(${si},'partial')"><span class="judge-icon">&#9651;</span>Almost</button><button class="judge-btn btn-wrong" onclick="judgeDictation(${si},'wrong')"><span class="judge-icon">&times;</span>Wrong</button></div><div id="afterJudge" class="hidden"></div></div>`;}
+function playDictation(si){const sent=PARTS[state.currentPart].sentences[si];speak(sent.en);const r=getResult(state.currentPart,si);r.playCount=(r.playCount||0)+1;setResult(state.currentPart,si,r);const el=document.getElementById('playCount-'+si);if(el)el.textContent='Played: '+r.playCount;}
+function playDictationSlow(si){const sent=PARTS[state.currentPart].sentences[si];speak(sent.en,0.6);const r=getResult(state.currentPart,si);r.playCount=(r.playCount||0)+1;setResult(state.currentPart,si,r);const el=document.getElementById('playCount-'+si);if(el)el.textContent='Played: '+r.playCount;}
+function judgeDictation(si,judgment){const sent=PARTS[state.currentPart].sentences[si];const r=getResult(state.currentPart,si);r.judgment=judgment;if(!r.history)r.history=[];r.history.push({judgment,date:new Date().toISOString(),round:state.round});setResult(state.currentPart,si,r);const card=document.getElementById('sentenceCard');card.classList.remove('anim-correct','anim-wrong');if(judgment==='correct')card.classList.add('anim-correct');else card.classList.add('anim-wrong');document.querySelectorAll('.judge-btn').forEach(b=>b.disabled=true);const afterEl=document.getElementById('afterJudge');afterEl.classList.remove('hidden');const hasTrans=sent.ja&&sent.ja.trim();afterEl.innerHTML=`<div class="answer-box"><div class="answer-label">Answer</div><div class="answer-text">${escHtml(sent.en)}</div>${hasTrans?`<button class="ja-toggle" onclick="document.getElementById('jaText-${si}').classList.toggle('hidden')"><span style="font-size:14px">JP</span> Translate</button><div class="ja-text hidden" id="jaText-${si}">${escHtml(sent.ja)}</div>`:''}</div><label class="memo-label">Memo</label><textarea class="memo-area" id="memoArea-${si}" placeholder="聞き取れなかったポイントなど..." onblur="saveMemo(${si})">${escHtml(r.memo||'')}</textarea><button class="next-btn" onclick="nextDictation()">Next &rarr;</button>`;renderMainNav();}
+function saveMemo(si){const el=document.getElementById('memoArea-'+si);if(el)setResult(state.currentPart,si,{memo:el.value});}
+function nextDictation(){state.currentSentence++;renderDictation();}
+function finishDictationRound(){const part=PARTS[state.currentPart];const retry=[];state.sessionQueue.forEach(si=>{const r=getResult(state.currentPart,si);if(r.judgment==='wrong'||r.judgment==='partial')retry.push(si);});const correctCount=state.sessionQueue.length-retry.length;const area=document.getElementById('practiceContent');if(retry.length===0||state.round>=state.maxRounds){area.innerHTML=`<div class="result-card"><div class="result-title">${retry.length===0?'Complete!':'Session Finished'}</div><div class="result-stats"><div class="r-stat"><span class="r-num green">${correctCount}</span><span class="r-label">OK</span></div><div class="r-stat"><span class="r-num red">${retry.length}</span><span class="r-label">Need Review</span></div><div class="r-stat"><span class="r-num">${state.round}</span><span class="r-label">Rounds</span></div></div>${retry.length===0?'<div class="result-info info-green">Great job!</div>':'<div class="result-info info-orange">'+retry.length+' sentences moved to Review.</div>'}<button class="restart-btn" onclick="startDictation()">Retry</button><button class="restart-btn secondary" onclick="switchView(\'review\')">Go to Review</button></div>`;renderMainNav();}else{area.innerHTML=`<div class="result-card"><div class="result-title">Round ${state.round} Complete</div><div class="result-stats"><div class="r-stat"><span class="r-num green">${correctCount}</span><span class="r-label">OK</span></div><div class="r-stat"><span class="r-num orange">${retry.length}</span><span class="r-label">Retry</span></div></div><div class="result-info info-orange">${retry.length} sentences repeat in Round ${state.round+1}.</div><button class="restart-btn" onclick="startRetryRound([${retry.join(',')}])">Start Round ${state.round+1}</button></div>`;}}
+function startRetryRound(indices){state.round++;state.sessionQueue=indices;state.currentSentence=0;indices.forEach(si=>{const r=getResult(state.currentPart,si);r.judgment=null;setResult(state.currentPart,si,r);});renderDictation();}
+function startVocab(){state.vocabFilterPart='All';state.vocabRound=1;state.vocabMaxRounds=3;state.vocabWrong=[];buildVocabQueue();renderVocabCard();}
+function getFilteredVocab(){const unitVocab=getUnitVocab(state.currentUnit);if(state.vocabFilterPart==='All')return[...unitVocab];return unitVocab.filter(w=>w.part===state.vocabFilterPart);}
+function buildVocabQueue(onlyFirstRoundWrong){let words;if(onlyFirstRoundWrong&&state.vocabFirstRoundWrong&&state.vocabFirstRoundWrong.length>0){words=[...state.vocabFirstRoundWrong];}else{words=getFilteredVocab();}for(let i=words.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[words[i],words[j]]=[words[j],words[i]];}state.vocabQueue=words;state.vocabIdx=0;state.vocabFlipped=false;state.vocabRound=1;state.vocabWrong=[];if(!onlyFirstRoundWrong)state.vocabFirstRoundWrong=[];}
+function renderVocabCard(){const area=document.getElementById('practiceContent');if(state.vocabIdx>=state.vocabQueue.length){showVocabResult();return;}const w=state.vocabQueue[state.vocabIdx];const vr=getVocabResult(w.en);const wrongCount=vr.wrong||0;state.vocabFlipped=false;const unitVocab=getUnitVocab(state.currentUnit);const unitVocabParts=["All",...new Set(unitVocab.map(v=>v.part))];let filterHtml='<div class="vocab-filter-row">';unitVocabParts.forEach(p=>{const cnt=p==='All'?unitVocab.length:unitVocab.filter(v=>v.part===p).length;const shortP=p==='All'?'All':p.replace(/^U\d+\s*/,'');filterHtml+=`<button class="part-chip${p===state.vocabFilterPart?' active':''}" onclick="state.vocabFilterPart='${p}';buildVocabQueue();renderVocabCard()">${shortP} <span class="chip-count">(${cnt})</span></button>`;}); filterHtml+='</div>';area.innerHTML=`${filterHtml}<div class="vocab-counter">${state.vocabIdx+1}<span> / ${state.vocabQueue.length}</span>${state.vocabRound>1?' <span style="color:#dc6843;font-size:11px;font-weight:600">Round '+state.vocabRound+'</span>':''}</div><div class="vocab-card anim-in" id="vocabCard" onclick="flipVocabCard()"><div class="card-badges"><span class="vocab-part-badge">${w.part.replace(/^U\d+\s*/,'')}</span>${wrongCount>=2?'<span class="wrong-count-badge">&times;'+wrongCount+'</span>':''}</div><div class="card-face" id="vFront" onclick="flipVocabCard()"><div class="card-tag">日本語</div><div class="card-main">${escHtml(w.ja)}</div><div class="tap-label">TAP or SPACE to FLIP</div></div><div class="card-face hidden" id="vBack"><div class="card-tag">ENGLISH</div><div class="card-answer">${escHtml(w.en)}</div><div class="card-answer-ja">${escHtml(w.ja)}</div>${w.example?'<div class="card-example">'+escHtml(w.example)+'</div>':''}<button class="speak-btn" onclick="event.stopPropagation();speakVocabCurrent()">🔊</button></div></div><div class="vocab-judge-row" id="vocabJudge"><button class="vocab-btn vb-wrong" id="vbWrong" disabled onclick="vocabAnswer('wrong')">&times;</button><button class="vocab-btn vb-correct" id="vbRight" disabled onclick="vocabAnswer('correct')">&#9675;</button></div>`;}
+function flipVocabCard(){if(state.vocabFlipped)return;state.vocabFlipped=true;document.getElementById('vFront').classList.add('hidden');document.getElementById('vBack').classList.remove('hidden');document.getElementById('vocabCard').classList.add('flipped');document.getElementById('vbWrong').disabled=false;document.getElementById('vbRight').disabled=false;const w=state.vocabQueue[state.vocabIdx];if(w)speakWithExample(w.en,w.example||'');}
+function vocabAnswer(judgment){const w=state.vocabQueue[state.vocabIdx];const vr=getVocabResult(w.en);if(judgment==='correct')vr.correct=(vr.correct||0)+1;else{vr.wrong=(vr.wrong||0)+1;state.vocabWrong.push(w);if(state.vocabRound===1){if(!state.vocabFirstRoundWrong)state.vocabFirstRoundWrong=[];if(!state.vocabFirstRoundWrong.find(x=>x.en===w.en))state.vocabFirstRoundWrong.push(w);}}vr.lastDate=new Date().toISOString();setVocabResult(w.en,vr);const card=document.getElementById('vocabCard');card.classList.remove('anim-correct','anim-wrong');card.classList.add(judgment==='correct'?'anim-correct':'anim-wrong');setTimeout(()=>{state.vocabIdx++;renderVocabCard();},350);}
+function showVocabResult(){const area=document.getElementById('practiceContent');const correctCount=state.vocabQueue.length-state.vocabWrong.length;const wrongCount=state.vocabWrong.length;if(wrongCount>0){area.innerHTML=`<div class="result-card"><div class="result-title">Round ${state.vocabRound} Complete</div><div class="result-stats"><div class="r-stat"><span class="r-num green">${correctCount}</span><span class="r-label">覚えた</span></div><div class="r-stat"><span class="r-num orange">${wrongCount}</span><span class="r-label">もう一回</span></div></div><div class="result-info info-orange">${wrongCount} 単語をRound ${state.vocabRound+1}で復習します</div><button class="restart-btn" onclick="startVocabRetry()">Round ${state.vocabRound+1} へ</button><button class="restart-btn secondary" onclick="buildVocabQueue();renderVocabCard()">全問やり直す</button></div>`;}else{const totalWords=getFilteredVocab().length;area.innerHTML=`<div class="result-card"><div class="result-title">パーフェクト！</div><div class="result-stats"><div class="r-stat"><span class="r-num green">${totalWords}</span><span class="r-label">覚えた</span></div><div class="r-stat"><span class="r-num">${state.vocabRound}</span><span class="r-label">Rounds</span></div></div><div class="result-info info-green">全問正解！すごい！</div><button class="restart-btn" onclick="buildVocabQueue();renderVocabCard()">もう一度（全問）</button>${state.vocabFirstRoundWrong&&state.vocabFirstRoundWrong.length>0?'<button class="restart-btn secondary" onclick="buildVocabQueue(true);renderVocabCard()">Round 1 で×だった '+state.vocabFirstRoundWrong.length+' 語だけ復習</button>':''}</div>`;}}
+function startVocabRetry(){state.vocabRound++;const retry=[...state.vocabWrong];for(let i=retry.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[retry[i],retry[j]]=[retry[j],retry[i]];}state.vocabQueue=retry;state.vocabIdx=0;state.vocabFlipped=false;state.vocabWrong=[];renderVocabCard();}
+function renderReview(){renderUnitNav('unitNavReview');const filters=document.getElementById('reviewFilters');const fOpts=[{key:'all',label:'All'},{key:'wrong',label:'&times; Wrong'},{key:'partial',label:'&#9651; Almost'},{key:'memo',label:'&#9998; Memo'}];filters.innerHTML='';fOpts.forEach(f=>{const b=document.createElement('button');b.className='filter-chip'+(state.reviewFilter===f.key?' active':'');b.innerHTML=f.label;b.onclick=()=>{state.reviewFilter=f.key;renderReview();};filters.appendChild(b);});const items=collectReviewItems();const content=document.getElementById('reviewContent');if(items.length===0){content.innerHTML='<div class="review-empty">No items to review. Keep practicing!</div>';return;}let html='';items.forEach(item=>{const cls=item.r.judgment==='wrong'?'ri-wrong':item.r.judgment==='partial'?'ri-partial':'';const badge=item.r.judgment==='wrong'?'<span class="review-item-badge badge-wrong">&times;</span>':item.r.judgment==='partial'?'<span class="review-item-badge badge-partial">&#9651;</span>':'<span class="review-item-badge badge-correct">&#9675;</span>';const shortLabel=PARTS[item.pi].label.replace(/^U\d+\s*/,'');html+=`<div class="review-item ${cls}"><div class="review-item-header"><span class="review-item-loc">${shortLabel} #${item.si+1}</span>${badge}</div><div class="review-item-text">${escHtml(item.sent.en)}</div>${item.sent.ja?'<div class="review-item-ja">'+escHtml(item.sent.ja)+'</div>':''}<div class="audio-row" style="margin-top:8px;margin-bottom:0"><button class="play-btn normal" style="padding:6px 12px;font-size:11px" onclick="speak('${escJs(item.sent.en)}')">Play</button><button class="play-btn slow" style="padding:6px 12px;font-size:11px" onclick="speak('${escJs(item.sent.en)}',0.6)">Slow</button></div>${item.r.memo?'<div class="review-item-memo">'+escHtml(item.r.memo)+'</div>':''}</div>`;});content.innerHTML=html;}
+function collectReviewItems(){const items=[];const unitParts=getUnitParts(state.currentUnit);unitParts.forEach(p=>{const pi=p.globalIdx;if(!p.sentences)return;p.sentences.forEach((sent,si)=>{const r=getResult(pi,si);if(!r.judgment&&!r.memo)return;let inc=false;if(state.reviewFilter==='all')inc=true;else if(state.reviewFilter==='wrong'&&r.judgment==='wrong')inc=true;else if(state.reviewFilter==='partial'&&r.judgment==='partial')inc=true;else if(state.reviewFilter==='memo'&&r.memo)inc=true;if(inc)items.push({pi,si,sent,r});});});return items;}
+function renderManage(){renderUnitNav('unitNavManage');const area=document.getElementById('manageContent');let html='';const unitParts=getUnitParts(state.currentUnit);unitParts.forEach(p=>{const pi=p.globalIdx;if(!p.sentences)return;const shortLabel=p.label.replace(/^U\d+\s*/,'');html+=`<div class="manage-card"><div class="manage-title"><span>${escHtml(shortLabel)} (${p.sentences.length})</span></div><div class="m-sent-list">`;p.sentences.forEach((s,si)=>{const isFirst=si===0,isLast=si===p.sentences.length-1;html+=`<div class="m-sent-item" id="sent-${pi}-${si}"><div class="m-move-btns"><button class="m-arrow" onclick="moveSentence(${pi},${si},-1)" title="上へ"${isFirst?' disabled':''}>▲</button><button class="m-arrow" onclick="moveSentence(${pi},${si},1)" title="下へ"${isLast?' disabled':''}>▼</button></div><div style="flex:1;min-width:0"><div class="m-sent-en">${escHtml(s.en)}</div>${s.ja?'<div class="m-sent-ja">'+escHtml(s.ja)+'</div>':''}</div>${unitParts.length>1?'<button class="m-move-part" onclick="moveToPart('+pi+','+si+')" title="パート移動">→移動</button>':''}<button class="m-edit-btn" onclick="editSentence(${pi},${si})" title="編集">✎</button><button class="m-sent-del" onclick="deleteSentence(${pi},${si})" title="削除">&times;</button></div>`;});html+=`</div><div class="m-btn-row" style="justify-content:flex-start"><button class="m-btn primary" onclick="addSentence(${pi})" style="font-size:12px;padding:6px 14px">＋ 文を追加</button></div></div>`;});const unitVocab=getUnitVocab(state.currentUnit);const vocabGlobalIndices=VOCAB_DATA.map((v,i)=>({...v,gi:i})).filter(v=>v.unit===state.currentUnit);html+=`<div class="manage-card"><div class="manage-title"><span>単語 (${unitVocab.length})</span></div><div class="m-sent-list">`;vocabGlobalIndices.forEach((w,idx)=>{const vi=w.gi;const vr=getVocabResult(w.en);const stats=(vr.correct||0)+(vr.wrong||0)>0?` ○${vr.correct||0} ×${vr.wrong||0}`:'';const shortP=w.part.replace(/^U\d+\s*/,'');const isFirst=idx===0,isLast=idx===vocabGlobalIndices.length-1;html+=`<div class="m-sent-item" id="vocab-${vi}"><div class="m-move-btns"><button class="m-arrow" onclick="moveVocab(${vi},-1)" title="上へ"${isFirst?' disabled':''}>▲</button><button class="m-arrow" onclick="moveVocab(${vi},1)" title="下へ"${isLast?' disabled':''}>▼</button></div><div style="flex:1;min-width:0"><div class="m-sent-en">${escHtml(w.en)} <span style="font-size:10px;color:#b0a69c">${w.type==='new'?'新出':'復習'} ${shortP}</span></div><div class="m-sent-ja">${escHtml(w.ja)}${w.example?' ・ '+escHtml(w.example):''}</div></div><div style="font-family:'DM Mono',monospace;font-size:11px;color:#8b7e74;flex-shrink:0">${stats}</div><button class="m-edit-btn" onclick="editVocab(${vi})" title="編集">✎</button><button class="m-sent-del" onclick="deleteVocab(${vi})" title="削除">&times;</button></div>`;});html+=`</div><div class="m-btn-row" style="justify-content:flex-start"><button class="m-btn primary" onclick="addVocab()" style="font-size:12px;padding:6px 14px">＋ 単語を追加</button></div></div>`;area.innerHTML=html;}
+function exportAllData(){const data={version:2,app:document.title,exportDate:new Date().toISOString(),parts:PARTS,results:state.results,vocabResults:state.vocabResults,vocabData:VOCAB_DATA};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='nh1_backup_'+new Date().toISOString().slice(0,10)+'.json';a.click();showToast('Data saved!','success');}
+function importAllData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=(ev)=>{try{const data=JSON.parse(ev.target.result);if(data.parts){PARTS.length=0;data.parts.forEach(p=>{if(p.sentences)p.sentences=p.sentences.map(normSent);PARTS.push(p);});saveParts();}if(data.results){state.results=data.results;saveResults();}if(data.vocabResults){state.vocabResults=data.vocabResults;saveVocabResults();}showToast('Data loaded!','success');renderManage();}catch(e){showToast('Invalid file','warn');}};reader.readAsText(file);e.target.value='';}
+function resetAllData(){if(!confirm('Reset ALL data? This cannot be undone.'))return;PARTS.length=0;INITIAL_PARTS.forEach(p=>PARTS.push(JSON.parse(JSON.stringify(p))));PARTS.forEach(p=>{if(p.sentences)p.sentences=p.sentences.map(normSent);});saveParts();state.results={};saveResults();state.vocabResults={};saveVocabResults();showToast('All data reset','warn');renderManage();}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escJs(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');}
+function escAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+(type||'info')+' show';setTimeout(()=>t.classList.remove('show'),2500);}
+function moveSentence(pi,si,dir){const arr=PARTS[pi].sentences;const ni=si+dir;if(ni<0||ni>=arr.length)return;[arr[si],arr[ni]]=[arr[ni],arr[si]];const kA=getKey(pi,si),kB=getKey(pi,ni);const rA=state.results[kA],rB=state.results[kB];if(rA||rB){if(rA)state.results[kB]=rA;else delete state.results[kB];if(rB)state.results[kA]=rB;else delete state.results[kA];saveResults();}saveParts();renderManage();}
+function editSentence(pi,si){const s=PARTS[pi].sentences[si];const el=document.getElementById('sent-'+pi+'-'+si);el.innerHTML=`<div style="flex:1"><label class="m-label">English</label><input class="m-input" id="edit-en-${pi}-${si}" value="${escAttr(s.en)}"><label class="m-label">日本語</label><input class="m-input" id="edit-ja-${pi}-${si}" value="${escAttr(s.ja||'')}"><div class="m-btn-row"><button class="m-btn primary" onclick="saveSentence(${pi},${si})">保存</button><button class="m-btn" style="background:#f0ebe4;color:#3d3429" onclick="renderManage()">キャンセル</button></div></div>`;document.getElementById('edit-en-'+pi+'-'+si).focus();}
+function saveSentence(pi,si){const en=document.getElementById('edit-en-'+pi+'-'+si).value.trim();const ja=document.getElementById('edit-ja-'+pi+'-'+si).value.trim();if(!en){showToast('英文を入力してください','warn');return;}PARTS[pi].sentences[si]={en,ja};saveParts();showToast('保存しました','success');renderManage();}
+function deleteSentence(pi,si){const s=PARTS[pi].sentences[si];if(!confirm('この文を削除しますか？\n'+s.en))return;PARTS[pi].sentences.splice(si,1);const oldResults={};PARTS[pi].sentences.forEach((_,i)=>{const oldKey=getKey(pi,i>=si?i+1:i);const newKey=getKey(pi,i);if(state.results[oldKey])oldResults[newKey]=state.results[oldKey];});Object.keys(state.results).forEach(k=>{if(k.startsWith(pi+'-'))delete state.results[k];});Object.assign(state.results,oldResults);saveResults();saveParts();showToast('削除しました','info');renderManage();}
+function addSentence(pi){const area=document.getElementById('manageContent');const cards=area.querySelectorAll('.manage-card');let cardIdx=0;const unitParts=getUnitParts(state.currentUnit);for(let i=0;i<unitParts.length;i++){if(unitParts[i].globalIdx===pi){cardIdx=i;break;}}const card=cards[cardIdx];const existing=card.querySelector('.add-form');if(existing){existing.remove();return;}const form=document.createElement('div');form.className='add-form';form.style.cssText='padding:12px;border-top:1px solid #e0d8cf;margin-top:8px';form.innerHTML=`<label class="m-label">English</label><input class="m-input" id="add-en-${pi}" placeholder="Hello, everyone."><label class="m-label">日本語</label><input class="m-input" id="add-ja-${pi}" placeholder="みなさん、こんにちは。"><div class="m-btn-row"><button class="m-btn primary" onclick="saveNewSentence(${pi})">追加</button><button class="m-btn" style="background:#f0ebe4;color:#3d3429" onclick="renderManage()">キャンセル</button></div>`;card.appendChild(form);document.getElementById('add-en-'+pi).focus();}
+function saveNewSentence(pi){const en=document.getElementById('add-en-'+pi).value.trim();const ja=document.getElementById('add-ja-'+pi).value.trim();if(!en){showToast('英文を入力してください','warn');return;}PARTS[pi].sentences.push({en,ja});saveParts();showToast('追加しました','success');renderManage();}
+function moveToPart(fromPi,si){const unitParts=getUnitParts(state.currentUnit);const others=unitParts.filter(p=>p.globalIdx!==fromPi);if(others.length===0)return;const choices=others.map((p,i)=>(i+1)+': '+p.label.replace(/^U\d+\s*/,'')).join('\n');const input=prompt('どのパートに移動しますか？\n'+choices+'\n\n番号を入力:');if(!input)return;const num=parseInt(input);if(isNaN(num)||num<1||num>others.length)return;const toPi=others[num-1].globalIdx;const sent=PARTS[fromPi].sentences.splice(si,1)[0];PARTS[toPi].sentences.push(sent);reindexResults(fromPi);saveParts();showToast(PARTS[toPi].label.replace(/^U\d+\s*/,'')+' に移動しました','success');renderManage();}
+function reindexResults(pi){Object.keys(state.results).forEach(k=>{if(k.startsWith(pi+'-'))delete state.results[k];});saveResults();}
+function moveVocab(vi,dir){const ni=vi+dir;if(ni<0||ni>=VOCAB_DATA.length)return;[VOCAB_DATA[vi],VOCAB_DATA[ni]]=[VOCAB_DATA[ni],VOCAB_DATA[vi]];localStorage.setItem(STORAGE_KEY+'_vocabData',JSON.stringify(VOCAB_DATA));renderManage();}
+function editVocab(vi){const w=VOCAB_DATA[vi];const el=document.getElementById('vocab-'+vi);const unitParts=getUnitParts(state.currentUnit);const partOpts=unitParts.map(p=>'<option'+(p.label===w.part?' selected':'')+'>'+escHtml(p.label)+'</option>').join('');el.innerHTML=`<div style="flex:1"><label class="m-label">English</label><input class="m-input" id="vedit-en-${vi}" value="${escAttr(w.en)}"><label class="m-label">日本語</label><input class="m-input" id="vedit-ja-${vi}" value="${escAttr(w.ja||'')}"><label class="m-label">例文</label><input class="m-input" id="vedit-ex-${vi}" value="${escAttr(w.example||'')}"><div style="display:flex;gap:8px;margin-top:8px"><div style="flex:1"><label class="m-label">Part</label><select class="m-input" id="vedit-part-${vi}" style="font-family:'Noto Sans JP',sans-serif">${partOpts}</select></div><div style="flex:1"><label class="m-label">種類</label><select class="m-input" id="vedit-type-${vi}" style="font-family:'Noto Sans JP',sans-serif"><option value="new"${w.type==='new'?' selected':''}>新出</option><option value="review"${w.type==='review'?' selected':''}>復習</option></select></div></div><div class="m-btn-row"><button class="m-btn primary" onclick="saveVocab(${vi})">保存</button><button class="m-btn" style="background:#f0ebe4;color:#3d3429" onclick="renderManage()">キャンセル</button></div></div>`;document.getElementById('vedit-en-'+vi).focus();}
+function saveVocab(vi){const en=document.getElementById('vedit-en-'+vi).value.trim();const ja=document.getElementById('vedit-ja-'+vi).value.trim();const ex=document.getElementById('vedit-ex-'+vi).value.trim();const part=document.getElementById('vedit-part-'+vi).value;const type=document.getElementById('vedit-type-'+vi).value;if(!en){showToast('英単語を入力してください','warn');return;}const oldEn=VOCAB_DATA[vi].en;VOCAB_DATA[vi]={en,ja,part,type,example:ex,unit:VOCAB_DATA[vi].unit};if(oldEn!==en&&state.vocabResults[oldEn]){state.vocabResults[en]=state.vocabResults[oldEn];delete state.vocabResults[oldEn];saveVocabResults();}localStorage.setItem(STORAGE_KEY+'_vocabData',JSON.stringify(VOCAB_DATA));showToast('保存しました','success');renderManage();}
+function deleteVocab(vi){const w=VOCAB_DATA[vi];if(!confirm('この単語を削除しますか？\n'+w.en+' ('+w.ja+')'))return;VOCAB_DATA.splice(vi,1);localStorage.setItem(STORAGE_KEY+'_vocabData',JSON.stringify(VOCAB_DATA));showToast('削除しました','info');renderManage();}
+function addVocab(){const area=document.getElementById('manageContent');const cards=area.querySelectorAll('.manage-card');const card=cards[cards.length-1];const existing=card.querySelector('.add-form');if(existing){existing.remove();return;}const unitParts=getUnitParts(state.currentUnit);const partOpts=unitParts.map(p=>'<option>'+escHtml(p.label)+'</option>').join('');const form=document.createElement('div');form.className='add-form';form.style.cssText='padding:12px;border-top:1px solid #e0d8cf;margin-top:8px';form.innerHTML=`<label class="m-label">English</label><input class="m-input" id="vadd-en" placeholder="hello"><label class="m-label">日本語</label><input class="m-input" id="vadd-ja" placeholder="こんにちは"><label class="m-label">例文</label><input class="m-input" id="vadd-ex" placeholder="Hello, everyone."><div style="display:flex;gap:8px;margin-top:8px"><div style="flex:1"><label class="m-label">Part</label><select class="m-input" id="vadd-part" style="font-family:'Noto Sans JP',sans-serif">${partOpts}</select></div><div style="flex:1"><label class="m-label">種類</label><select class="m-input" id="vadd-type" style="font-family:'Noto Sans JP',sans-serif"><option value="new">新出</option><option value="review">復習</option></select></div></div><div class="m-btn-row"><button class="m-btn primary" onclick="saveNewVocab()">追加</button><button class="m-btn" style="background:#f0ebe4;color:#3d3429" onclick="renderManage()">キャンセル</button></div>`;card.appendChild(form);document.getElementById('vadd-en').focus();}
+function saveNewVocab(){const en=document.getElementById('vadd-en').value.trim();const ja=document.getElementById('vadd-ja').value.trim();const ex=document.getElementById('vadd-ex').value.trim();const part=document.getElementById('vadd-part').value;const type=document.getElementById('vadd-type').value;if(!en){showToast('英単語を入力してください','warn');return;}VOCAB_DATA.push({en,ja,part,type,example:ex,unit:state.currentUnit});localStorage.setItem(STORAGE_KEY+'_vocabData',JSON.stringify(VOCAB_DATA));showToast('追加しました','success');renderManage();}
+state.mode='dictation';state.currentUnit=UNITS[0];const firstParts=getUnitParts(UNITS[0]);if(firstParts.length>0)state.currentPart=firstParts[0].globalIdx;renderUnitNav('unitNav');renderMainNav();startDictation();
+</script>
+</body>
+</html>
