@@ -644,6 +644,166 @@ const INITIAL_PARTS=[
 ];
 const INITIAL_VOCAB_DATA=[
   {
+    "en": "morning",
+    "ja": "朝、午前",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Good morning."
+  },
+  {
+    "en": "name",
+    "ja": "名前",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "My name is Saki."
+  },
+  {
+    "en": "tennis",
+    "ja": "テニス",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "I like tennis."
+  },
+  {
+    "en": "you",
+    "ja": "あなた(たち)を[に]、あなた(たち)は[が]",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Nice to meet you."
+  },
+  {
+    "en": "I",
+    "ja": "私は[が]",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "I like tennis."
+  },
+  {
+    "en": "my",
+    "ja": "私の",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "My name is Saki."
+  },
+  {
+    "en": "meet",
+    "ja": "…と知り合いになる",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Nice to meet you."
+  },
+  {
+    "en": "am",
+    "ja": "…です、…だ",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "I'm Yuki."
+  },
+  {
+    "en": "is",
+    "ja": "…です、…だ",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "My name is Saki."
+  },
+  {
+    "en": "like",
+    "ja": "…を好む、…が好きである",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "I like tennis."
+  },
+  {
+    "en": "do",
+    "ja": "[疑問文や応答を作る]",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Do you like tennis?"
+  },
+  {
+    "en": "nice",
+    "ja": "すてきな、よい",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Nice to meet you."
+  },
+  {
+    "en": "good",
+    "ja": "よい",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Good morning."
+  },
+  {
+    "en": "yes",
+    "ja": "はい、ええ",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Yes, I do."
+  },
+  {
+    "en": "to",
+    "ja": "…する[である]こと",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Nice to meet you."
+  },
+  {
+    "en": "hi",
+    "ja": "やあ、こんにちは",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Hi, I'm Yuki."
+  },
+  {
+    "en": "hello",
+    "ja": "やあ、こんにちは",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Hello. Nice to meet you."
+  },
+  {
+    "en": "I'm",
+    "ja": "I amの短縮形",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "I'm Yuki."
+  },
+  {
+    "en": "Nice to meet you.",
+    "ja": "はじめまして。",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Nice to meet you."
+  },
+  {
+    "en": "Good morning.",
+    "ja": "おはようございます。",
+    "part": "U0 重要語句",
+    "unit": "Unit 0",
+    "type": "new",
+    "example": "Good morning."
+  },
+  {
     "en": "call",
     "ja": "～を…と呼ぶ",
     "part": "U1 Part 1",
@@ -1588,9 +1748,9 @@ const INITIAL_VOCAB_DATA=[
     "example": "Good luck!"
   }
 ];
-const VOCAB_PARTS=["All", "U1 Part 1", "U1 Part 2", "U1 Part 3", "U2 Part 1", "U2 Part 2", "U2 Part 3", "U3 Part 1", "U3 Part 2", "U3 Part 3"];
-const UNITS=["Unit 1", "Unit 2", "Unit 3"];
-const DATA_VERSION=9+'-'+92;
+const VOCAB_PARTS=["All", "U0 重要語句", "U1 Part 1", "U1 Part 2", "U1 Part 3", "U2 Part 1", "U2 Part 2", "U2 Part 3", "U3 Part 1", "U3 Part 2", "U3 Part 3"];
+const UNITS=["Unit 0", "Unit 1", "Unit 2", "Unit 3"];
+const DATA_VERSION=10+'-'+112;
 const STORAGE_KEY='new_horizon_1';
 const PARTS_KEY=STORAGE_KEY+'_parts';
 let VOCAB_DATA=(function(){try{const saved=localStorage.getItem(STORAGE_KEY+'_vocabData');if(saved){const parsed=JSON.parse(saved);if(Array.isArray(parsed)&&parsed.length>0)return parsed;}}catch(e){}return JSON.parse(JSON.stringify(INITIAL_VOCAB_DATA));})();
