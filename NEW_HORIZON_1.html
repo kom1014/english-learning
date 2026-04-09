@@ -3086,11 +3086,11 @@ const INITIAL_VOCAB_DATA=[
 ];
 const VOCAB_PARTS=["All", "U0-1", "U1 Part 1", "U1 Part 2", "U1 Part 3", "U2 Part 1", "U2 Part 2", "U2 Part 3", "U3 Part 1", "U3 Part 2", "U3 Part 3", "U4 Part 1", "U4 Part 2", "U4 Part 3", "U5 Part 1", "U5 Part 2", "U5 Part 3"];
 const UNITS=["Unit 0", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5"];
-const DATA_VERSION=12+'-'+195;
+const DATA_VERSION=12+'-'+195+'-v'+INITIAL_VOCAB_DATA.length;
 const STORAGE_KEY='new_horizon_1';
 const PARTS_KEY=STORAGE_KEY+'_parts';
-let VOCAB_DATA=(function(){try{const saved=localStorage.getItem(STORAGE_KEY+'_vocabData');if(saved){const parsed=JSON.parse(saved);if(Array.isArray(parsed)&&parsed.length>0)return parsed;}}catch(e){}return JSON.parse(JSON.stringify(INITIAL_VOCAB_DATA));})();
-function saveVocabData(){localStorage.setItem(STORAGE_KEY+'_vocabData',JSON.stringify(VOCAB_DATA));}
+let VOCAB_DATA=(function(){try{const sv=localStorage.getItem(STORAGE_KEY+'_vocabVersion');const saved=localStorage.getItem(STORAGE_KEY+'_vocabData');if(saved&&sv===String(INITIAL_VOCAB_DATA.length)){const parsed=JSON.parse(saved);if(Array.isArray(parsed)&&parsed.length>0)return parsed;}}catch(e){}return JSON.parse(JSON.stringify(INITIAL_VOCAB_DATA));})();
+function saveVocabData(){localStorage.setItem(STORAGE_KEY+'_vocabData',JSON.stringify(VOCAB_DATA));localStorage.setItem(STORAGE_KEY+'_vocabVersion',String(INITIAL_VOCAB_DATA.length));}
 const VOCAB_RESULT_KEY=STORAGE_KEY+'_vocab';
 const VERSION_KEY=STORAGE_KEY+'_version';
 let PARTS=loadParts();
